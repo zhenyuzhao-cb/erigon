@@ -880,6 +880,7 @@ Loop:
 		if inSync, err = cfg.hd.InsertHeaders(headerInserter.NewFeedHeaderFunc(tx, cfg.blockReader), cfg.chainConfig.TerminalTotalDifficulty, logPrefix, logEvery.C, uint64(currentTime.Unix())); err != nil {
 			return err
 		}
+		logger.Info(fmt.Sprintf("[%s] Inserted headers up to #%d in %v", logPrefix, headerInserter.GetHighest(), time.Since(currentTime)))
 
 		if test {
 			announces := cfg.hd.GrabAnnounces()
@@ -889,6 +890,7 @@ Loop:
 		}
 
 		if headerInserter.BestHeaderChanged() { // We do not break unless there best header changed
+			logger.Info(fmt.Sprintf("[%s] Best header changed to #%d", logPrefix, headerInserter.GetHighest()))
 			noProgressCounter = 0
 			wasProgress = true
 			// if this is initial cycle, we want to make sure we insert all known headers (inSync)
