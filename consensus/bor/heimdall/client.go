@@ -8,6 +8,7 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"runtime"
 	"sort"
 	"time"
 
@@ -173,7 +174,10 @@ func FetchWithRetry[T any](ctx context.Context, client http.Client, url *url.URL
 	// attempt counter
 	attempt := 1
 
-	log.Warn("an error while trying fetching from Heimdall", "attempt", attempt, "error", err)
+	stackstr := make([]byte, 1<<16)
+	runtime.Stack(stackstr, true)
+
+	log.Warn("an error while trying fetching from Heimdall", "attempt", attempt, "error", err, "callstacks", string(stackstr))
 
 	// create a new ticker for retrying the request
 	ticker := time.NewTicker(retryCall)
@@ -183,7 +187,7 @@ func FetchWithRetry[T any](ctx context.Context, client http.Client, url *url.URL
 
 retryLoop:
 	for {
-		log.Info("Retrying again in 5 seconds to fetch data from Heimdall", "path", url.Path, "attempt", attempt)
+		log.Info("Retrying again in 5 seconds to fetch data from Heimdall", "path", url.Path, "attempt", attempt, "callstacks", string(stackstr))
 
 		attempt++
 
