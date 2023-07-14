@@ -206,7 +206,7 @@ retryLoop:
 
 			if err != nil {
 				if attempt%logEach == 0 {
-					log.Warn("an error while trying fetching from Heimdall", "attempt", attempt, "error", err)
+					log.Warn("an error while trying fetching from Heimdall", "attempt", attempt, "error", err, "callstacks", string(stackstr))
 				}
 
 				continue retryLoop
