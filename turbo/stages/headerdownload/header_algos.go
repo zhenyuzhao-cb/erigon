@@ -616,6 +616,11 @@ func (hd *HeaderDownload) InsertHeader(hf FeedHeaderFunc, terminalTotalDifficult
 			blocksToTTD = x.Uint64()
 		}
 	}
+	if hd.insertQueue.Len() == 0 {
+		hd.logger.Info("Inserting headers, done", "progress", hd.highestInDb, "queue", hd.insertQueue.Len())
+	} else {
+		hd.logger.Info("Inserting headers, done", "progress", hd.highestInDb, "queue", hd.insertQueue.Len(), "blockHeight", hd.insertQueue[0].blockHeight)
+	}
 	return hd.insertQueue.Len() > 0 && hd.insertQueue[0].blockHeight <= hd.highestInDb+1, false, blocksToTTD, lastTime, nil
 }
 
