@@ -627,14 +627,19 @@ func (hd *HeaderDownload) InsertHeaders(hf FeedHeaderFunc, terminalTotalDifficul
 	var force bool
 	var blocksToTTD uint64
 	var blockTime uint64
+	hd.logger.Info("Inserting headers, start looping", "progress", hd.highestInDb, "queue", hd.insertQueue.Len())
 	for more {
+		hd.logger.Debug("Inserting headers, in loop", "progress", hd.highestInDb, "queue", hd.insertQueue.Len())
 		if more, force, blocksToTTD, blockTime, err = hd.InsertHeader(hf, terminalTotalDifficulty, logPrefix, logChannel); err != nil {
+			hd.logger.Error("Error inserting header", "err", err)
 			return false, err
 		}
 		if force {
+			hd.logger.Info("Forced to stop inserting headers", "progress", hd.highestInDb, "queue", hd.insertQueue.Len())
 			return true, nil
 		}
 	}
+	hd.logger.Info("Finished inserting headers", "progress", hd.highestInDb, "queue", hd.insertQueue.Len())
 	if blocksToTTD > 0 {
 		hd.logger.Info("Estimated to reaching TTD", "blocks", blocksToTTD)
 	}
