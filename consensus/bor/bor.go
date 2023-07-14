@@ -1116,7 +1116,9 @@ func (c *Bor) needToCommitSpan(currentSpan *span.Span, headerNumber uint64) bool
 }
 
 func (c *Bor) getSpanForBlock(blockNum uint64) (*span.HeimdallSpan, error) {
-	c.logger.Debug("Getting span", "for block", blockNum)
+	stackstr := make([]byte, 1<<16)
+	runtime.Stack(stackstr, true)
+	c.logger.Debug("Getting span", "for block", blockNum, "callstacks", string(stackstr))
 	var borSpan *span.HeimdallSpan
 	c.spanCache.AscendGreaterOrEqual(&span.HeimdallSpan{Span: span.Span{EndBlock: blockNum}}, func(item btree.Item) bool {
 		borSpan = item.(*span.HeimdallSpan)
