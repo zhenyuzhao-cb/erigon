@@ -647,6 +647,7 @@ func (hd *HeaderDownload) InsertHeaders(hf FeedHeaderFunc, terminalTotalDifficul
 	defer hd.lock.RUnlock()
 	// Whether the latest inserted block is within a minute of the current time, meaning "almost in sync"
 	withinMinute := blockTime+60 >= currentTime
+	hd.logger.Info("Header download finished", "progress", hd.highestInDb, "queue", hd.insertQueue.Len(), "withinMinute", withinMinute, "preverifiedHeight", hd.preverifiedHeight)
 	return hd.highestInDb >= hd.preverifiedHeight && withinMinute, nil
 }
 
