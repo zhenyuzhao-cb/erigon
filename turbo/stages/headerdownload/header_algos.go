@@ -627,19 +627,21 @@ func (hd *HeaderDownload) InsertHeaders(hf FeedHeaderFunc, terminalTotalDifficul
 	var force bool
 	var blocksToTTD uint64
 	var blockTime uint64
+	loopCount := 0
 	hd.logger.Info("Inserting headers, start looping", "progress", hd.highestInDb, "queue", hd.insertQueue.Len())
 	for more {
-		hd.logger.Debug("Inserting headers, in loop", "progress", hd.highestInDb, "queue", hd.insertQueue.Len())
+		loopCount++
+		hd.logger.Debug("Inserting headers, in loop", "progress", hd.highestInDb, "queue", hd.insertQueue.Len(), "loop", loopCount)
 		if more, force, blocksToTTD, blockTime, err = hd.InsertHeader(hf, terminalTotalDifficulty, logPrefix, logChannel); err != nil {
-			hd.logger.Error("Error inserting header", "err", err)
+			hd.logger.Error("Error inserting header", "err", err, "loop", loopCount)
 			return false, err
 		}
 		if force {
-			hd.logger.Info("Forced to stop inserting headers", "progress", hd.highestInDb, "queue", hd.insertQueue.Len())
+			hd.logger.Info("Forced to stop inserting headers", "progress", hd.highestInDb, "queue", hd.insertQueue.Len(), "loop", loopCount)
 			return true, nil
 		}
 	}
-	hd.logger.Info("Finished inserting headers", "progress", hd.highestInDb, "queue", hd.insertQueue.Len())
+	hd.logger.Info("Finished inserting headers", "progress", hd.highestInDb, "queue", hd.insertQueue.Len(), "loop", loopCount)
 	if blocksToTTD > 0 {
 		hd.logger.Info("Estimated to reaching TTD", "blocks", blocksToTTD)
 	}
