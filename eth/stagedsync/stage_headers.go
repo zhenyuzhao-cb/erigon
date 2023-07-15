@@ -119,6 +119,8 @@ func SpawnStageHeaders(
 		preProgress = s.BlockNumber
 	}
 
+	logger.Info("Starting Headers stage", "preProgress", preProgress, "initialCycle", initialCycle, "test", test, "useExternalTx", useExternalTx)
+
 	notBor := cfg.chainConfig.Bor == nil
 
 	unsettledForkChoice, headHeight := cfg.hd.GetUnsettledForkChoice()
@@ -890,7 +892,7 @@ Loop:
 		}
 
 		if headerInserter.BestHeaderChanged() { // We do not break unless there best header changed
-			logger.Info(fmt.Sprintf("[%s] Best header changed to #%d", logPrefix, headerInserter.GetHighest()))
+			logger.Info(fmt.Sprintf("[%s] Best header changed to #%d, preProgress: %d", logPrefix, headerInserter.GetHighest(), prevProgress))
 			noProgressCounter = 0
 			wasProgress = true
 			// if this is initial cycle, we want to make sure we insert all known headers (inSync)
