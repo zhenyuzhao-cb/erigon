@@ -647,7 +647,8 @@ func (hd *HeaderDownload) InsertHeaders(hf FeedHeaderFunc, terminalTotalDifficul
 		}
 		if loopCount > 10 {
 			hd.logger.Info("Looping too many times, stopping", "progress", hd.highestInDb, "queue", hd.insertQueue.Len(), "loop", loopCount)
-			return true, nil
+			break
+			// return true, nil
 		}
 	}
 	hd.logger.Info("Finished inserting headers", "progress", hd.highestInDb, "queue", hd.insertQueue.Len(), "loop", loopCount)
