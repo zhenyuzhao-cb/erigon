@@ -892,11 +892,11 @@ Loop:
 		}
 
 		if headerInserter.BestHeaderChanged() { // We do not break unless there best header changed
-			logger.Info(fmt.Sprintf("[%s] Best header changed to #%d, preProgress: %d, diff: %d", logPrefix, headerInserter.GetHighest(), prevProgress, headerInserter.GetHighest()-prevProgress))
+			logger.Info(fmt.Sprintf("[%s] Best header changed to #%d, headerProgress: %d, diff: %d", logPrefix, headerInserter.GetHighest(), headerProgress, headerInserter.GetHighest()-headerProgress))
 			noProgressCounter = 0
 			wasProgress = true
 			// if this is initial cycle, we want to make sure we insert all known headers (inSync)
-			if inSync || headerInserter.GetHighest()-prevProgress >= 1000 {
+			if inSync || headerInserter.GetHighest()-headerProgress >= 1000 {
 				break
 			}
 		}
