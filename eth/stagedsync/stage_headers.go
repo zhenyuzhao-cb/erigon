@@ -142,8 +142,12 @@ func SpawnStageHeaders(
 
 	if transitionedToPoS {
 		libcommon.SafeClose(cfg.hd.QuitPoWMining)
+		logger.Info("start HeadersPOS")
+		defer logger.Info("finish HeadersPOS")
 		return HeadersPOS(s, u, ctx, tx, cfg, initialCycle, test, useExternalTx, preProgress, logger)
 	} else {
+		logger.Info("start HeadersPOW")
+		defer logger.Info("finish HeadersPOW")
 		return HeadersPOW(s, u, ctx, tx, cfg, initialCycle, test, useExternalTx, logger)
 	}
 }
@@ -823,6 +827,7 @@ func HeadersPOW(
 	var lastSkeletonTime time.Time
 	var peer [64]byte
 	var sentToPeer bool
+	loopStartTime := time.Now()
 Loop:
 	for !stopped {
 
@@ -892,11 +897,12 @@ Loop:
 		}
 
 		if headerInserter.BestHeaderChanged() { // We do not break unless there best header changed
-			logger.Info(fmt.Sprintf("[%s] Best header changed to #%d, headerProgress: %d, diff: %d", logPrefix, headerInserter.GetHighest(), headerProgress, headerInserter.GetHighest()-headerProgress))
+			logger.Info(fmt.Sprintf("[%s] Best header changed to #%d, headerProgress: %d, diff: %d, loop time: %v",
+				logPrefix, headerInserter.GetHighest(), headerProgress, headerInserter.GetHighest()-headerProgress, time.Since(loopStartTime)))
 			noProgressCounter = 0
 			wasProgress = true
 			// if this is initial cycle, we want to make sure we insert all known headers (inSync)
-			if inSync || headerInserter.GetHighest()-headerProgress >= 2000 {
+			if inSync || headerInserter.GetHighest()-headerProgress >= 2000 || time.Since(loopStartTime) > 10*time.Second {
 				break
 			}
 		}
