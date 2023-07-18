@@ -142,12 +142,14 @@ func SpawnStageHeaders(
 
 	if transitionedToPoS {
 		libcommon.SafeClose(cfg.hd.QuitPoWMining)
-		logger.Info("start HeadersPOS")
-		defer logger.Info("finish HeadersPOS")
+		startTime := time.Now()
+		logger.Info("starting HeadersPOS")
+		defer logger.Info(fmt.Sprintf("finish HeadersPOS, used %s", time.Since(startTime)))
 		return HeadersPOS(s, u, ctx, tx, cfg, initialCycle, test, useExternalTx, preProgress, logger)
 	} else {
-		logger.Info("start HeadersPOW")
-		defer logger.Info("finish HeadersPOW")
+		startTime := time.Now()
+		logger.Info("starting HeadersPOW")
+		defer logger.Info(fmt.Sprintf("finish HeadersPOW, used %s", time.Since(startTime)))
 		return HeadersPOW(s, u, ctx, tx, cfg, initialCycle, test, useExternalTx, logger)
 	}
 }
