@@ -889,7 +889,7 @@ Loop:
 		if inSync, err = cfg.hd.InsertHeaders(headerInserter.NewFeedHeaderFunc(tx, cfg.blockReader), cfg.chainConfig.TerminalTotalDifficulty, logPrefix, logEvery.C, uint64(currentTime.Unix())); err != nil {
 			return err
 		}
-		logger.Info(fmt.Sprintf("[%s] Inserted headers up to #%d in %v", logPrefix, headerInserter.GetHighest(), time.Since(currentTime)))
+		logger.Info(fmt.Sprintf("[%s] Inserted headers up to #%d in %v (total: %v)", logPrefix, headerInserter.GetHighest(), time.Since(currentTime), time.Since(loopStartTime)))
 
 		if test {
 			announces := cfg.hd.GrabAnnounces()
