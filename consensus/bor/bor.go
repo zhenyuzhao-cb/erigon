@@ -8,7 +8,6 @@ import (
 	"fmt"
 	"io"
 	"math/big"
-	"runtime"
 	"sort"
 	"strconv"
 	"sync"
@@ -1167,9 +1166,6 @@ func (c *Bor) fetchAndCommitSpan(
 
 		heimdallSpan = *s
 	} else {
-		stackstr := make([]byte, 1<<16)
-		runtime.Stack(stackstr, true)
-		c.logger.Info("Fetching span in fetchAndCommitSpan", "for block", header.Number.Uint64(), string(stackstr))
 		response, err := c.HeimdallClient.Span(c.execCtx, newSpanID)
 		if err != nil {
 			return err
