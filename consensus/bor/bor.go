@@ -811,7 +811,6 @@ func (c *Bor) Finalize(config *chain.Config, header *types.Header, state *state.
 	if isSprintStart(headerNumber, c.config.CalculateSprint(headerNumber)) {
 		cx := statefull.ChainContext{Chain: chain, Bor: c}
 		// check and commit span
-		c.logger.Info("Committing span", "header", headerNumber)
 		if err := c.checkAndCommitSpan(state, header, cx, syscall); err != nil {
 			c.logger.Error("Error while committing span", "err", err)
 			return nil, types.Receipts{}, err
@@ -887,7 +886,6 @@ func (c *Bor) FinalizeAndAssemble(chainConfig *chain.Config, header *types.Heade
 		cx := statefull.ChainContext{Chain: chain, Bor: c}
 
 		// check and commit span
-		c.logger.Info("FinalizeAndAssemble", "headerNumber", headerNumber)
 		err := c.checkAndCommitSpan(state, header, cx, syscall)
 		if err != nil {
 			c.logger.Error("Error while committing span", "err", err)
@@ -1116,9 +1114,7 @@ func (c *Bor) needToCommitSpan(currentSpan *span.Span, headerNumber uint64) bool
 }
 
 func (c *Bor) getSpanForBlock(blockNum uint64) (*span.HeimdallSpan, error) {
-	stackstr := make([]byte, 1<<16)
-	runtime.Stack(stackstr, true)
-	c.logger.Debug("Getting span", "for block", blockNum, "callstacks", string(stackstr))
+	c.logger.Debug("Getting span", "for block", blockNum)
 	var borSpan *span.HeimdallSpan
 	c.spanCache.AscendGreaterOrEqual(&span.HeimdallSpan{Span: span.Span{EndBlock: blockNum}}, func(item btree.Item) bool {
 		borSpan = item.(*span.HeimdallSpan)
