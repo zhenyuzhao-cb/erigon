@@ -910,6 +910,10 @@ Loop:
 				break
 			}
 		}
+		if time.Since(loopStartTime) > 10*time.Second {
+			logger.Info(fmt.Sprintf("[%s] Loop too long: %v", logPrefix, time.Since(loopStartTime)))
+			break
+		}
 		if test {
 			break
 		}
