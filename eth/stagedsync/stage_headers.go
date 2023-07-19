@@ -904,7 +904,9 @@ Loop:
 			noProgressCounter = 0
 			wasProgress = true
 			// if this is initial cycle, we want to make sure we insert all known headers (inSync)
-			if inSync || headerInserter.GetHighest()-headerProgress >= 2000 || time.Since(loopStartTime) > 10*time.Second {
+			if inSync ||
+				// headerInserter.GetHighest()-headerProgress >= 2000 ||
+				time.Since(loopStartTime) > 10*time.Second {
 				break
 			}
 		}
