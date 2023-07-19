@@ -351,6 +351,8 @@ func PrintTables(db kv.RoDB, tx kv.RwTx) []interface{} {
 }
 
 func (s *Sync) runStage(stage *Stage, db kv.RwDB, tx kv.RwTx, firstCycle bool, badBlockUnwind bool) (err error) {
+	logPrefix := s.LogPrefix()
+	s.logger.Debug(fmt.Sprintf("[%s] START", logPrefix))
 	start := time.Now()
 	stageState, err := s.StageState(stage.ID, tx, db)
 	if err != nil {
@@ -364,7 +366,6 @@ func (s *Sync) runStage(stage *Stage, db kv.RwDB, tx kv.RwTx, firstCycle bool, b
 	}
 
 	took := time.Since(start)
-	logPrefix := s.LogPrefix()
 	if took > 60*time.Second {
 		s.logger.Info(fmt.Sprintf("[%s] DONE", logPrefix), "in", took)
 	} else {
