@@ -633,10 +633,10 @@ func (hd *HeaderDownload) InsertHeaders(hf FeedHeaderFunc, terminalTotalDifficul
 	var blocksToTTD uint64
 	var blockTime uint64
 	loopCount := 0
-	hd.logger.Info("Inserting headers, start looping", "progress", hd.highestInDb, "queue", hd.insertQueue.Len())
+	hd.logger.Info(fmt.Sprintf("[%s] Inserting headers, start looping", logPrefix), "progress", hd.highestInDb, "queue", hd.insertQueue.Len())
 	for more {
 		loopCount++
-		hd.logger.Debug("Inserting headers, in loop", "progress", hd.highestInDb, "queue", hd.insertQueue.Len(), "loop", loopCount)
+		hd.logger.Debug(fmt.Sprintf("[%s] Inserting headers, in loop", logPrefix), "progress", hd.highestInDb, "queue", hd.insertQueue.Len(), "loop", loopCount)
 		if more, force, blocksToTTD, blockTime, err = hd.InsertHeader(hf, terminalTotalDifficulty, logPrefix, logChannel); err != nil {
 			hd.logger.Error("Error inserting header", "err", err, "loop", loopCount)
 			return false, err
@@ -651,7 +651,7 @@ func (hd *HeaderDownload) InsertHeaders(hf FeedHeaderFunc, terminalTotalDifficul
 		// 	// return true, nil
 		// }
 	}
-	hd.logger.Info("Finished inserting headers", "progress", hd.highestInDb, "queue", hd.insertQueue.Len(), "loop", loopCount)
+	hd.logger.Info(fmt.Sprintf("[%s] Finished inserting headers", logPrefix), "progress", hd.highestInDb, "queue", hd.insertQueue.Len(), "loop", loopCount)
 	if blocksToTTD > 0 {
 		hd.logger.Info("Estimated to reaching TTD", "blocks", blocksToTTD)
 	}
@@ -659,7 +659,7 @@ func (hd *HeaderDownload) InsertHeaders(hf FeedHeaderFunc, terminalTotalDifficul
 	defer hd.lock.RUnlock()
 	// Whether the latest inserted block is within a minute of the current time, meaning "almost in sync"
 	withinMinute := blockTime+60 >= currentTime
-	hd.logger.Info("Header download finished", "progress", hd.highestInDb, "queue", hd.insertQueue.Len(), "withinMinute", withinMinute, "preverifiedHeight", hd.preverifiedHeight)
+	hd.logger.Info(fmt.Sprintf("[%s] Header download finished", logPrefix), "progress", hd.highestInDb, "queue", hd.insertQueue.Len(), "withinMinute", withinMinute, "preverifiedHeight", hd.preverifiedHeight)
 	return hd.highestInDb >= hd.preverifiedHeight && withinMinute, nil
 }
 
