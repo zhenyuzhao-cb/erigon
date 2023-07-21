@@ -645,11 +645,11 @@ func (hd *HeaderDownload) InsertHeaders(hf FeedHeaderFunc, terminalTotalDifficul
 			hd.logger.Info("Forced to stop inserting headers", "progress", hd.highestInDb, "queue", hd.insertQueue.Len(), "loop", loopCount)
 			return true, nil
 		}
-		// if loopCount > 10 {
-		// 	hd.logger.Info("Looping too many times, stopping", "progress", hd.highestInDb, "queue", hd.insertQueue.Len(), "loop", loopCount)
-		// 	break
-		// 	// return true, nil
-		// }
+		if loopCount > 10 {
+			hd.logger.Info(fmt.Sprintf("[%s] Looping too many times, stopping", logPrefix), "progress", hd.highestInDb, "queue", hd.insertQueue.Len(), "loop", loopCount)
+			break
+			// return true, nil
+		}
 	}
 	hd.logger.Info(fmt.Sprintf("[%s] Finished inserting headers", logPrefix), "progress", hd.highestInDb, "queue", hd.insertQueue.Len(), "loop", loopCount)
 	if blocksToTTD > 0 {
