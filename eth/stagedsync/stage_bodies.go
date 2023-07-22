@@ -128,12 +128,16 @@ func BodiesForward(
 	var totalDelivered uint64 = 0
 	cr := ChainReader{Cfg: cfg.chanConfig, Db: tx, BlockReader: cfg.blockReader}
 
+	loopStart := time.Now()
+
 	loopBody := func() (bool, error) {
 		// loopCount is used here to ensure we don't get caught in a constant loop of making requests
 		// having some time out so requesting again and cycling like that forever.  We'll cap it
 		// and break the loop so we can see if there are any records to actually process further down
 		// then come back here again in the next cycle
 		for loopCount := 0; loopCount == 0 || (req != nil && sentToPeer && loopCount < requestLoopCutOff); loopCount++ {
+			logger.Debug(fmt.Sprintf("[%s] Requesting more bodies...", logPrefix), "from", bodyProgress, "to", headerProgress, "totaltime", time.Since(loopStart), "loopcount", loopCount, "loopduration", time.Since(loopStart))
+
 			start := time.Now()
 			currentTime := uint64(time.Now().Unix())
 			req, err = cfg.bd.RequestMoreBodies(tx, cfg.blockReader, currentTime, cfg.blockPropagator)
